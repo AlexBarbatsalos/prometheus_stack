@@ -26,8 +26,7 @@ services:
       - '--path.rootfs=/host'
     volumes:
       - '/:/host:ro,rslave'
-    ports:
-      - "9100:9100"
+    
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.49.1
@@ -39,8 +38,7 @@ services:
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    ports:
-      - "8080:8080"
+    
 
   blackbox_exporter:
     image: prom/blackbox-exporter:v0.25.0
@@ -69,9 +67,7 @@ services:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./grafana/provisioning/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
-      - ./grafana/provisioning/dashboards/json:/var/lib/grafana/dashboards:ro 
-    ports:
-      - "3000:3000"
+      - ./grafana/provisioning/dashboards/json:/var/lib/grafana/dashboards:ro  
     depends_on:
       - prometheus
 
@@ -84,9 +80,7 @@ services:
       - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
-    ports:
-      - "9093:9093"
-
+    
 volumes:
   prometheus_data:
   grafana_data:

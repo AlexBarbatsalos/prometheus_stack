@@ -1,0 +1,7 @@
+## Caddy serves as a proxy towards the public internet
+# It listens on ports 80/443 and forwards traffic to grafana port 3000.
+# Importantly, caddy manages TLS certificate setup and rotation under the hood automatically
+
+{$CADDY_DOMAIN} {
+    reverse_proxy grafana:3000
+}

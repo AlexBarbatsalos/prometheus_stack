@@ -1,0 +1,24 @@
+services:
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: caddy
+    restart: unless-stopped
+    environment:
+      - CADDY_DOMAIN=${CADDY_DOMAIN}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - grafana
+
+  grafana:
+    environment:
+      - GF_SERVER_ROOT_URL=https://${CADDY_DOMAIN}
+
+volumes:
+  caddy_data:
+  caddy_config:

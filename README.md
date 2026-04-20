@@ -11,6 +11,8 @@ A ready-to-deploy monitoring stack for small businesses and single-server enviro
 - **cAdvisor** — per-container resource metrics
 - **Blackbox Exporter** — external endpoint probing (HTTP, TLS)
 
+---
+
 ## Quick start
 
 ```bash
@@ -30,6 +32,30 @@ docker compose up -d
 ```
 
 Grafana is available at http://localhost:3000.
+
+---
+
+## Development vs. Production
+
+**Development** (local testing, all ports exposed):
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+
+**Production** (behind Caddy with automatic TLS):
+
+1. Point your domain's DNS A record at the server's IP
+2. Set `CADDY_DOMAIN` in `.env`
+3. Run:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
+Caddy automatically obtains and renews TLS certificates via Let's Encrypt. Only ports 80 and 443 are exposed.
+
+---
 
 ## Configuration
 
@@ -76,6 +102,8 @@ Provisioned dashboards live in `grafana/provisioning/dashboards/json/`. To add a
 4. Drop it into the `json/` directory
 5. Restart Grafana: `docker compose restart grafana`
 
+---
+
 ## Ports (development)
 
 | Service | Port |
@@ -89,6 +117,9 @@ Provisioned dashboards live in `grafana/provisioning/dashboards/json/`. To add a
 
 In production, only Grafana should be exposed — ideally behind a reverse proxy with TLS.
 
+
+---
+
 ## Validating configuration
 
 ```bash
@@ -98,6 +129,8 @@ docker compose exec prometheus promtool check config /etc/prometheus/prometheus.
 # Reload Prometheus without restart
 curl -X POST http://localhost:9090/-/reload
 ```
+
+---
 
 ## Roadmap
 
