@@ -1,0 +1,25 @@
+# ============================================
+# HTTP Targets to Monitor
+# ============================================
+# Add one entry per URL you want to probe.
+# Prometheus picks up changes automatically.
+#
+# Example:
+#   - targets: ['https://example.com']
+#     labels:
+#       name: 'example-website'
+#       environment: 'production'
+#
+# The 'name' label appears in Grafana dashboards
+# and alert notifications, so make it human-readable.
+# ============================================
+
+- targets: ['https://example.com']
+  labels:
+    name: 'example-website'
+    environment: 'production'
+
+# - targets: ['https://another-site.de']
+#   labels:
+#     name: 'another-site'
+#     environment: 'production'

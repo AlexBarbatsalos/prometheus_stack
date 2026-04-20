@@ -1,0 +1,22 @@
+# ============================================
+# Custom Exporter Targets
+# ============================================
+# Add application-specific exporters here.
+# Each entry needs the host:port of the exporter
+# and a descriptive label.
+#
+# Common exporters:
+#   postgres_exporter  -> port 9187
+#   mysqld_exporter    -> port 9104
+#   nginx_exporter     -> port 9113
+#   redis_exporter     -> port 9121
+#
+# Example:
+#   - targets: ['postgres_exporter:9187']
+#     labels:
+#       name: 'main-database'
+#       type: 'postgresql'
+# ============================================
+
+# No custom exporters configured yet.
+# Uncomment and adapt the example above.

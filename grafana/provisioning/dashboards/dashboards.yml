@@ -1,0 +1,18 @@
+### SUMMARY 
+# scans the folder in path for json files 
+# These files provide the source of truth for grafana dashboards
+# files are loaded into the Infrastructure folder 
+
+apiVersion: 1
+
+providers:
+  - name: 'default'
+    orgId: 1
+    folder: 'Infrastructure'
+    type: file
+    disableDeletion: true
+    updateIntervalSeconds: 30
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards    
+      foldersFromFilesStructure: false

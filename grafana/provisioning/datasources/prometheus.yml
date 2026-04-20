@@ -1,0 +1,15 @@
+##### SUMMARY ######
+# This file tells Grafana where a prometheus instance
+# exists and how to reach it
+
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false          # no editing through the UI possible -> config files as single source of truth

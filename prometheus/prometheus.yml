@@ -1,0 +1,55 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/rues/*.yml
+
+alerting: 
+  alertmanagers:
+    - static_configs:
+      - targets: ['alertmanager:9093']
+
+scrape_configs:
+  # --- Template infrastructure (don't edit) ---
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node_exporter:9100']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  # --- Client-specific targets (edit files in targets/) ---
+
+  - job_name: 'blackbox_http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/targets/blackbox_http.yml    # client-specific targets in LAN
+        refresh_interval: 30s
+    relabel_configs:
+      ### config relabeling has to be there, as prometheus doesn't scrap the target URL directly
+      # but uses it as a URL parameter to the scraping endpoint like so:
+      # blackbox_exporter:9115/probe?target=https://example.com
+      # So the target in the config (example.com) is replaced by the probing endpoint (blackbox_exporter:9115/probe)
+      # and the actual target is added as an URL parameter
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115
+
+  - job_name: 'custom_exporters'
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/targets/custom_exporters.yml    # client-specific targets in the web(URLs)
+        refresh_interval: 30s

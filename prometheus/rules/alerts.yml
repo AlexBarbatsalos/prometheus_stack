@@ -1,0 +1,69 @@
+groups:
+  - name: targets
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: '{{ $labels.job }}/{{ $labels.instance }} is down'
+          description: '{{ $labels.instance }} has been unreachable for more than 2 minutes.'
+
+  - name: blackbox
+    rules:
+      - alert: WebsiteDown
+        expr: probe_success == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: '{{ $labels.name }} is down ({{ $labels.instance }})'
+          description: 'HTTP probe for {{ $labels.name }} has been failing for more than 2 minutes.'
+
+      - alert: TlsCertExpiringSoon
+        expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 14
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: 'TLS cert for {{ $labels.name }} expires in {{ $value | printf "%.0f" }} days'
+          description: 'Certificate for {{ $labels.instance }} expires in less than 14 days.'
+
+      - alert: SlowProbe
+        expr: probe_duration_seconds > 3
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: '{{ $labels.name }} is responding slowly ({{ $value | printf "%.1f" }}s)'
+          description: 'HTTP probe for {{ $labels.name }} has been taking over 3 seconds for 5 minutes.'
+
+  - name: host
+    rules:
+      - alert: HighMemoryUsage
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Memory usage above 90%'
+          description: 'Available memory has been below 10% for 5 minutes.'
+
+      - alert: DiskSpaceLow
+        expr: (1 - node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"}) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Disk usage above 85% on {{ $labels.mountpoint }}'
+          description: 'Filesystem {{ $labels.mountpoint }} has been above 85% for 10 minutes.'
+
+      - alert: HighCpuUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'CPU usage above 90%'
+          description: 'Average CPU usage has been above 90% for 10 minutes.'
